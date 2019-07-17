@@ -22,5 +22,5 @@ query("UPDATE GS_RQT SET STATUS = \"approved\")"; // Remove approved column
 query("INSERT INTO GROCERY VALUES ($productName, $rqtProductPrice)"); //Trigger
 
 // If Rejected
-query("UPDATE GS_RQT SET STATUS = \"approved\""); // Also notify user somehow
+query("UPDATE GS_RQT SET STATUS = \"rejected\""); // Also notify user somehow
 ?>
