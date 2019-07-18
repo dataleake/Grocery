@@ -5,82 +5,81 @@
 <html>
 
 <head>
-	<title> Inventory Updates </title>
-<?php
-   
-   if (file_exists("/var/www/html/gs_search.php")) {
-		include "/var/www/html/gs_search.php";
-	} else {
-	        die("File not found");
-	}
-?>
+    
+	<title> Employee Portal </title>
+    <style>
+        div.double {
+            border-style: double;
+            width : 200px;
+            height: 220px; <!--- Auto Adjust as variables? -->
+        }
+        a.small {
+            font-size: 8pt;
+        }
+    </style>
 <center>
-    <h2> Inventory </h2> 
+    <div class = 'double'">
+
+    <h2> Login </h2> 
 
 	<form name="form" method="" Action ="">
-       	  <input type="input" name ="searchfor"> </input>
-      	  <input type="submit"></input>
+       	  <center>
+          <input type="input" name ="username" placeholder="username"> </input> </center>
+          <br>
+          <center><input type="password" name ="password" placeholder="password"> </input></center>
+          <br>  
+          <input type="submit"></input>
+          <br><br>
+          <a class = "small" href="www.google.com">Forgot Password</a>  
+           
 	</form>
-
+    </div>
 </center>
-
+<!--
 <?php
        if (file_exists("/var/www/sql_info.php")) {
         include "/var/www/sql_info.php";
 }
 ?>
-
+-->
 <?php
 // Grab the text in the textbox
-$productName = $_GET['searchfor'];
-
+$emp_user = $_GET['username'];
+$emp_pass = $_GET['password']; // Hash?
+    
 // Connect to mySQL
 $conn = OpenCon();
 
 // Generate query with user input
-$stmt = "select * from grocery where product like '%$productName%'";
+$stmt = "SELECT CASE WHEN $employeeID = EMP.ID and $emp_pass = PASS then 'TRUE' else 'FALSE' END validate FROM ( 
+                   SELECT EMP.ID, PASS FROM GS_EMP emp inner join GS_EMP_PASS pass on emp.id = pass.id and upper(emp.name) = upper($emp_user)
+      )";
 
-// Get all data from grocery table
+// Get password verification
 $result = $conn->query($stmt);
-// echo $stmt; // For testing sql statements
-
-// Print error if any
-//print mysqli_error($conn);
 
 // New line
 echo "<br>";                                                                                                                                                                                                                                
 
-// start of sql injection blocker
-	if (substr_count($productName, "'") > 0) {
+// start of sql injection blocker // Needed on a login page? XSS?
+	if (substr_count($emp_user, "'") + substr_count($emp_pass, "'") > 0) {
     		 echo "<center>Please only enter characters.</center>";                                                                              
 	} else {
-
-// If there are results then print each value in a new cell	
-if ($result->num_rows > 0 ) {
-	echo "<center><table border = \"1\">";
-	// Need column headers as variables
-	echo "<th>Product</th>";
-        echo "<th>Price</th>";
-// Loop through results and store rows in table
-    while ($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>".$row["product"]."</td>";
-                echo "<td>".$row["price"]."</td>";
-                echo "</tr>";
+    
+        // Check if query result is valid
+        // print mysqli_error($conn);
+    
+        // If TRUE then redirect to portal
+        if ($result) {
+            //header("Location: /var/www/html/portal.php")
+            // How to restrict access to portal? 
+            // How to store credentials throughout a users time on the site.
+            echo "Welcome to the portal, $emp_user!
+        } else {
+            // If FALSE then display "Invalid user/pass combination, please try again."
+            echo "Invalid user/pass combination, please try again."
         }
-	echo "</table></center>";
-} else {
-	// When the requested product is not in the table
-	 echo "<center>";
- 	 echo "We do not carry ".$productName.".";
- 	 echo "<br>";
- 	 echo "Would you like us to stock up on ".$productName."?  ";
- 	 echo "<br>";
-  	 echo "<button type=\"button\"> Yes </button>  ";
- 	 echo "<button type=\"button\"> No </button>";
- 	 echo "</center>";
-}
-}//end injection blocker
+    }//end injection blocker
 
 $conn->close();
 ?>
