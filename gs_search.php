@@ -5,23 +5,34 @@
 
 <head>
 	<title> Inventory Check </title>
-
+    
+    <style>
+        div.doubleb {
+            border-style: double;
+            width: 200px;
+            height: 200px;
+            background-color:lightblue;
+        }
+    </style>
+    
 <center>
+    <div class = doubleb>
     <h2> Product Search </h2> 
 
 	<form name="form" method="" Action ="">
        	  <input type="input" name ="searchfor"> </input>
+          <br><br>
       	  <input type="submit"></input>
 	</form>
-
+    </div>
 </center>
-
+<!--
 <?php
        if (file_exists("/var/www/sql_info.php")) {
         include "/var/www/sql_info.php";
 }
 ?>
-
+-->
 <?php
 // Grab the text in the textbox
 $productName = $_GET['searchfor'];
@@ -41,7 +52,7 @@ $result = $conn->query($stmt);
 
 // New line
 echo "<br>";                                                                                                                                                                                                                                
-
+echo "<div class = doubleb>";
 // start of sql injection blocker
 	if (substr_count($productName, "'") > 0) {
     		 echo "<center>Please only enter characters.</center>";                                                                              
@@ -73,7 +84,7 @@ if ($result->num_rows > 0 ) {
  	 echo "</center>";
 }
 }//end injection blocker
-
+echo "</div>";
 $conn->close();
 ?>
 

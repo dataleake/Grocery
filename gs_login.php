@@ -74,10 +74,10 @@ echo "<br>";
             //header("Location: /var/www/html/portal.php")
             // How to restrict access to portal? 
             // How to store credentials throughout a users time on the site.
-            echo "Welcome to the portal, $emp_user!
+            echo "Welcome to the portal, ".$emp_user."!";
         } else {
             // If FALSE then display "Invalid user/pass combination, please try again."
-            echo "Invalid user/pass combination, please try again."
+            echo "Invalid user/pass combination, please try again.";
         }
     }//end injection blocker
 
