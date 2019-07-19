@@ -1,4 +1,4 @@
-# aws
+# Grocery Store
 This repo will contain the html/php files used to generate my "grocery store".
 
 The Store page will be written in html/php with a connection to mysql database which will house:
