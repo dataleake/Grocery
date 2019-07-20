@@ -5,7 +5,7 @@
 <html>
 
 <head>
-    
+       
 	<title> Employee Portal </title>
     <style>
         div.double {
@@ -17,6 +17,9 @@
             font-size: 8pt;
         }
     </style>
+
+<?php include "/var/www/html/aws/gs_menu.php"; ?>
+
 <center>
     <div class = 'double'">
 
@@ -30,7 +33,7 @@
           <br>  
           <input type="submit"></input>
           <br><br>
-          <a class = "small" href="www.google.com">Forgot Password</a>  
+          <a class = "small" href="/aws/gs_login.php">Forgot Password</a>  
            
 	</form>
     </div>
@@ -46,21 +49,16 @@
 // Grab the text in the textbox
 $emp_user = $_GET['username'];
 $emp_pass = $_GET['password']; // Hash?
-    
+
 // Connect to mySQL
 $conn = OpenCon();
 
-// Generate query with user input
-$stmt = "SELECT CASE WHEN $employeeID = EMP.ID and $emp_pass = PASS then 'TRUE' else 'FALSE' END validate FROM ( 
-                   SELECT EMP.ID, PASS FROM GS_EMP emp inner join GS_EMP_PASS pass on emp.id = pass.id and upper(emp.name) = upper($emp_user)
-      )";
-
-// Get password verification
 $result = $conn->query($stmt);
+print $conn->error;
 
 // New line
-echo "<br>";                                                                                                                                                                                                                                
-
+echo "<br>";                  
+                                                                                                                                                                                                              
 // start of sql injection blocker // Needed on a login page? XSS?
 	if (substr_count($emp_user, "'") + substr_count($emp_pass, "'") > 0) {
     		 echo "<center>Please only enter characters.</center>";                                                                              
@@ -68,17 +66,29 @@ echo "<br>";
     
         // Check if query result is valid
         // print mysqli_error($conn);
-    
-        // If TRUE then redirect to portal
-        if ($result) {
-            //header("Location: /var/www/html/portal.php")
+
+// Connect to mySQL
+$conn = OpenCon();                                                                                                                                                                                                                           
+
+// Generate query with user input
+$stmt = "SELECT '$emp_pass' = pass p FROM gs_emp emp inner join gs_emp_pass pass on emp.id = pass.id where upper(emp.name) = upper('$emp_user')";
+// Will have to hash passwords, send them into table, pull password back into php then user password_verify(pass, hash)
+// Get password verification                                                                                                                                                                                                                 $result = $conn->query($stmt);                                                                                                                                                                                                               print $conn->error;  
+$result = $conn->query($stmt);
+print $conn->error;
+echo "<br>";
+while($row = $result->fetch_assoc()) {
+   
+        if ($row["p"]) { // If the password is validated then...
             // How to restrict access to portal? 
             // How to store credentials throughout a users time on the site.
-            echo "Welcome to the portal, ".$emp_user."!";
-        } else {
+            echo "<center>Welcome to the portal, ".$emp_user."!</center>";
+	    header("Location: gs_updates.php");
+          } else {
             // If FALSE then display "Invalid user/pass combination, please try again."
-            echo "Invalid user/pass combination, please try again.";
-        }
+            echo "<center><p style='color:red;'>Invalid user/pass combination, please try again.</center>";
+          }
+}	
     }//end injection blocker
 
 $conn->close();

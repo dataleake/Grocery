@@ -12,6 +12,7 @@
             width: 200px;
             height: 200px;
             background-color:lightblue;
+	    text-align: center;
         }
     </style>
     
@@ -26,13 +27,13 @@
 	</form>
     </div>
 </center>
-<!--
+
 <?php
        if (file_exists("/var/www/sql_info.php")) {
         include "/var/www/sql_info.php";
 }
 ?>
--->
+
 <?php
 // Grab the text in the textbox
 $productName = $_GET['searchfor'];
@@ -51,7 +52,7 @@ $result = $conn->query($stmt);
 //print mysqli_error($conn);
 
 // New line
-echo "<br>";                                                                                                                                                                                                                                
+echo "<br><center>";                                                                                                                                                                                                                                
 echo "<div class = doubleb>";
 // start of sql injection blocker
 	if (substr_count($productName, "'") > 0) {
@@ -79,12 +80,23 @@ if ($result->num_rows > 0 ) {
  	 echo "<br>";
  	 echo "Would you like us to stock up on ".$productName."?  ";
  	 echo "<br>";
-  	 echo "<button type=\"button\"> Yes </button>  ";
- 	 echo "<button type=\"button\"> No </button>";
+  	 echo "<form method=\"post\"><input type=\"submit\" name=\"requesty\" id=\"requesty\" value=\"Yes\"/></form>";
+         echo "<form method=\"post\"><input type=\"submit\" name=\"requestn\" id=\"requestn\" value=\"No\"/></form>";     
+	 if (array_key_exists('requesty',$_POST)) {
+                $result = $conn->query("insert into gs_rqt values ('pending', '$productName', null, null, null)");
+		$err = $conn->error;
+		printf($err);
+		echo "Request submitted";
+	}
+
+	 if (array_key_exists('requestn',$_POST)) {print "Feel free to browse";}
+         //if ($rqtSelection) { echo "Great, a request for $productName has been submitted."; } else {echo "OK, no problem";}
+ 	 //echo "<button type=\"button\"> Yes </button>";
+	 //echo "<button type=\"button\"> No </button>";
  	 echo "</center>";
 }
 }//end injection blocker
-echo "</div>";
+echo "</center></div>";
 $conn->close();
 ?>
 
