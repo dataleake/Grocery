@@ -15,25 +15,30 @@
 	    text-align: center;
         }
     </style>
-    
+
+<?php
+       if (file_exists("gs_menu.php")) {
+
+		include "gs_menu.php";
+	}
+?>
 <center>
+
     <div class = doubleb>
     <h2> Product Search </h2> 
 
 	<form name="form" method="" Action ="">
        	  <input type="input" name ="searchfor"> </input>
           <br><br>
-      	  <input type="submit"></input>
+      	  <input type="submit" value="Search"/>
 	</form>
     </div>
 </center>
-
 <?php
        if (file_exists("/var/www/sql_info.php")) {
         include "/var/www/sql_info.php";
 }
 ?>
-
 <?php
 // Grab the text in the textbox
 $productName = $_GET['searchfor'];
@@ -101,9 +106,7 @@ $conn->close();
 ?>
 
 
-
 </head>
-
 
 
 </html>
